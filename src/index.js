@@ -6,8 +6,8 @@ import Provider from './context/myProvider';
 ReactDOM
   .createRoot(document.getElementById('root'))
   .render(
-  
-<Provider>
-   <App />
-</Provider>
-);
+
+    <Provider>
+      <App />
+    </Provider>,
+  );

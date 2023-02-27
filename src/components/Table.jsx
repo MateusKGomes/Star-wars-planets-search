@@ -10,6 +10,7 @@ export default function Table() {
   const filteredByName = data.filter(
     (item) => item.name.includes(search),
   );
+
   return (
     <div>
       <input
