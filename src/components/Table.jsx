@@ -10,13 +10,14 @@ export default function Table() {
     'population', 'orbital_period', 'diameter',
     'rotation_period', 'surface_water',
   ]);
+  const [selectedFilters, setSelectedFilters] = useState([]);
 
   const {
     data, setData,
   } = useContext(Mycontext);
 
   const filteredByName = data.filter(
-    ({ name }) => name.includes(search),
+    (item) => item.name.includes(search),
   );
 
   const handleClick = (event) => {
@@ -32,12 +33,14 @@ export default function Table() {
         if (comparison === 'igual a') {
           return +result[selectColumn] === +numberComparasion;
         }
-        return filtered.every((el) => el);
+        return true;
       });
+    setData(filtered);
     const arr = arrayOfOptions.filter((item) => item !== selectColumn);
     setArrayOfOptions(arr);
-
-    setData(filtered);
+    setSelectColumn(arr[0]);
+    setSelectedFilters([...selectedFilters,
+      { comparison, selectColumn, numberComparasion }]);
   };
 
   return (
@@ -53,14 +56,14 @@ export default function Table() {
 
       <select
         data-testid="column-filter"
-        defaultValue=""
+        value={ selectColumn }
         onChange={ ({ target }) => {
           setSelectColumn(target.value);
         } }
       >
         {
-          arrayOfOptions.map((select) => (
-            <option key={ select } value={ select }>
+          arrayOfOptions?.map((select) => (
+            <option key={ select }>
               {select}
             </option>
 
@@ -70,6 +73,7 @@ export default function Table() {
 
       <select
         data-testid="comparison-filter"
+        value={ comparison }
         onChange={ ({ target }) => {
           setComparison(target.value);
         } }
@@ -95,6 +99,21 @@ export default function Table() {
       >
         Filtrar
       </button>
+      {
+        selectedFilters?.map((item, index) => (
+          <div key={ index }>
+            <span data-testid="filter">
+              {item.selectColumn}
+              {item.comparison}
+              {item.numberComparasion}
+              <button>
+                Deletar Filtro
+              </button>
+            </span>
+
+          </div>
+        ))
+      }
       <table>
         <thead>
           <tr>
