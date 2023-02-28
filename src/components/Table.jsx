@@ -6,13 +6,17 @@ export default function Table() {
   const [selectColumn, setSelectColumn] = useState('population');
   const [comparison, setComparison] = useState('maior que');
   const [numberComparasion, setNumberComparasion] = useState(0);
+  const [arrayOfOptions, setArrayOfOptions] = useState([
+    'population', 'orbital_period', 'diameter',
+    'rotation_period', 'surface_water',
+  ]);
 
   const {
     data, setData,
   } = useContext(Mycontext);
 
   const filteredByName = data.filter(
-    (item) => item.name.includes(search),
+    ({ name }) => name.includes(search),
   );
 
   const handleClick = (event) => {
@@ -28,8 +32,11 @@ export default function Table() {
         if (comparison === 'igual a') {
           return +result[selectColumn] === +numberComparasion;
         }
-        return true;
+        return filtered.every((el) => el);
       });
+    const arr = arrayOfOptions.filter((item) => item !== selectColumn);
+    setArrayOfOptions(arr);
+
     setData(filtered);
   };
 
@@ -51,13 +58,14 @@ export default function Table() {
           setSelectColumn(target.value);
         } }
       >
+        {
+          arrayOfOptions.map((select) => (
+            <option key={ select } value={ select }>
+              {select}
+            </option>
 
-        <option>population</option>
-        <option>orbital_period</option>
-        <option>diameter</option>
-        <option>rotation_period</option>
-        <option>surface_water</option>
-
+          ))
+        }
       </select>
 
       <select
