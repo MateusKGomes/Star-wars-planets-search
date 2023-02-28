@@ -9,7 +9,7 @@ function App() {
       <Header />
       <Table />
     </div>
-    );
+  );
 }
 
 export default App;

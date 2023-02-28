@@ -3,13 +3,35 @@ import Mycontext from '../context/myContext';
 
 export default function Table() {
   const [search, setSearch] = useState('');
+  const [selectColumn, setSelectColumn] = useState('population');
+  const [comparison, setComparison] = useState('maior que');
+  const [numberComparasion, setNumberComparasion] = useState(0);
+
   const {
-    data,
+    data, setData,
   } = useContext(Mycontext);
 
   const filteredByName = data.filter(
     (item) => item.name.includes(search),
   );
+
+  const handleClick = (event) => {
+    event.preventDefault();
+    const filtered = filteredByName
+      .filter((result) => {
+        if (comparison === 'maior que') {
+          return +result[selectColumn] > +numberComparasion;
+        }
+        if (comparison === 'menor que') {
+          return +result[selectColumn] < +numberComparasion;
+        }
+        if (comparison === 'igual a') {
+          return +result[selectColumn] === +numberComparasion;
+        }
+        return true;
+      });
+    setData(filtered);
+  };
 
   return (
     <div>
@@ -21,6 +43,50 @@ export default function Table() {
           setSearch(target.value);
         } }
       />
+
+      <select
+        data-testid="column-filter"
+        defaultValue=""
+        onChange={ ({ target }) => {
+          setSelectColumn(target.value);
+        } }
+      >
+
+        <option>population</option>
+        <option>orbital_period</option>
+        <option>diameter</option>
+        <option>rotation_period</option>
+        <option>surface_water</option>
+
+      </select>
+
+      <select
+        data-testid="comparison-filter"
+        onChange={ ({ target }) => {
+          setComparison(target.value);
+        } }
+      >
+        <option>maior que</option>
+        <option>menor que</option>
+        <option>igual a</option>
+
+      </select>
+
+      <input
+        type="number"
+        data-testid="value-filter"
+        value={ numberComparasion }
+        onChange={ ({ target }) => {
+          setNumberComparasion(target.value);
+        } }
+      />
+      <button
+        type="button"
+        data-testid="button-filter"
+        onClick={ handleClick }
+      >
+        Filtrar
+      </button>
       <table>
         <thead>
           <tr>
@@ -41,7 +107,7 @@ export default function Table() {
         </thead>
         <tbody>
           {
-            filteredByName.map((planet) => (
+            filteredByName?.map((planet) => (
               <tr key={ planet.name }>
                 <th>
                   {planet.name}
