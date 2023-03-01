@@ -40,7 +40,7 @@ export default function Table() {
       { comparison, selectColumn, numberComparasion }]);
   };
 
-  const teste = (e, item) => {
+  const deleteFilterByClick = (e, item) => {
     const newArr = selectedFilters
       .filter((el) => el.selectColumn !== e.target.id);
     setSelectedFilters(newArr);
@@ -64,8 +64,8 @@ export default function Table() {
       });
       return filterNewArr.every((filterNew) => filterNew);
     });
-    const qualquer = [...filterData];
-    setData(qualquer);
+    const filterDataResults = [...filterData];
+    setData(filterDataResults);
   };
 
   const handleClickClear = () => {
@@ -156,7 +156,7 @@ export default function Table() {
               <button
                 type="button"
                 id={ item.selectColumn }
-                onClick={ (e) => teste(e, item) }
+                onClick={ (e) => deleteFilterByClick(e, item) }
               >
                 Deletar Filtro
               </button>
