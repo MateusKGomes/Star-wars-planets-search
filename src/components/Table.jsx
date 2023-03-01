@@ -2,27 +2,24 @@ import React, { useContext, useState } from 'react';
 import Mycontext from '../context/myContext';
 
 export default function Table() {
+  const {
+    data, setData, newData,
+  } = useContext(Mycontext);
+
+  const arrayOfOptionsInnitial = [
+    'population', 'orbital_period', 'diameter',
+    'rotation_period', 'surface_water',
+  ];
   const [search, setSearch] = useState('');
   const [selectColumn, setSelectColumn] = useState('population');
   const [comparison, setComparison] = useState('maior que');
   const [numberComparasion, setNumberComparasion] = useState(0);
-  const [arrayOfOptions, setArrayOfOptions] = useState([
-    'population', 'orbital_period', 'diameter',
-    'rotation_period', 'surface_water',
-  ]);
+  const [arrayOfOptions, setArrayOfOptions] = useState(arrayOfOptionsInnitial);
   const [selectedFilters, setSelectedFilters] = useState([]);
-
-  const {
-    data, setData,
-  } = useContext(Mycontext);
-
-  const filteredByName = data.filter(
-    (item) => item.name.includes(search),
-  );
 
   const handleClick = (event) => {
     event.preventDefault();
-    const filtered = filteredByName
+    const filtered = data
       .filter((result) => {
         if (comparison === 'maior que') {
           return +result[selectColumn] > +numberComparasion;
@@ -41,6 +38,43 @@ export default function Table() {
     setSelectColumn(arr[0]);
     setSelectedFilters([...selectedFilters,
       { comparison, selectColumn, numberComparasion }]);
+  };
+
+  const teste = (e, item) => {
+    const newArr = selectedFilters
+      .filter((el) => el.selectColumn !== e.target.id);
+    setSelectedFilters(newArr);
+    const arrSelect = item.selectColumn;
+    setArrayOfOptions([...arrayOfOptions, arrSelect]);
+    if (newArr.length === 0) {
+      setData(newData);
+    }
+    const filterData = newData.filter((element) => {
+      const filterNewArr = newArr.map((result) => {
+        if (result.comparison === 'maior que') {
+          return +element[result.selectColumn] > +result.numberComparasion;
+        }
+        if (result.comparison === 'menor que') {
+          return +element[result.selectColumn] < +result.numberComparasion;
+        }
+        if (result.comparison === 'igual a') {
+          return +element[result.selectColumn] === +result.numberComparasion;
+        }
+        return true;
+      });
+      return filterNewArr.every((filterNew) => filterNew);
+    });
+    const qualquer = [...filterData];
+    setData(qualquer);
+  };
+
+  const handleClickClear = () => {
+    setSelectedFilters([]);
+    setSelectColumn('population');
+    setComparison('maior que');
+    setNumberComparasion(0);
+    setArrayOfOptions(arrayOfOptionsInnitial);
+    setData(newData);
   };
 
   return (
@@ -99,14 +133,31 @@ export default function Table() {
       >
         Filtrar
       </button>
+
+      <button
+        type="submit"
+        data-testid="button-remove-filters"
+        onClick={ handleClickClear }
+      >
+        Limpar
+      </button>
+
       {
         selectedFilters?.map((item, index) => (
           <div key={ index }>
-            <span data-testid="filter">
+            <span
+              data-testid="filter"
+              value={ index }
+
+            >
               {item.selectColumn}
               {item.comparison}
               {item.numberComparasion}
-              <button>
+              <button
+                type="button"
+                id={ item.selectColumn }
+                onClick={ (e) => teste(e, item) }
+              >
                 Deletar Filtro
               </button>
             </span>
@@ -114,6 +165,7 @@ export default function Table() {
           </div>
         ))
       }
+
       <table>
         <thead>
           <tr>
@@ -134,46 +186,48 @@ export default function Table() {
         </thead>
         <tbody>
           {
-            filteredByName?.map((planet) => (
+            data?.filter(
+              (item) => item.name.includes(search),
+            ).map((planet) => (
               <tr key={ planet.name }>
                 <th>
                   {planet.name}
                 </th>
                 <th>
-                  { planet.rotation_period}
+                  {planet.rotation_period}
                 </th>
                 <th>
-                  { planet.orbital_period}
+                  {planet.orbital_period}
                 </th>
                 <th>
-                  { planet.diameter}
+                  {planet.diameter}
                 </th>
                 <th>
-                  { planet.climate}
+                  {planet.climate}
                 </th>
                 <th>
-                  { planet.gravity}
+                  {planet.gravity}
                 </th>
                 <th>
-                  { planet.terrain}
+                  {planet.terrain}
                 </th>
                 <th>
-                  { planet.surface_water}
+                  {planet.surface_water}
                 </th>
                 <th>
-                  { planet.population}
+                  {planet.population}
                 </th>
                 <th>
-                  { planet.films}
+                  {planet.films}
                 </th>
                 <th>
-                  { planet.created}
+                  {planet.created}
                 </th>
                 <th>
-                  { planet.edited}
+                  {planet.edited}
                 </th>
                 <th>
-                  { planet.url}
+                  {planet.url}
                 </th>
 
               </tr>
