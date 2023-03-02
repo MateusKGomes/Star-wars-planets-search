@@ -44,6 +44,7 @@ export default function Table() {
     const newArr = selectedFilters
       .filter((el) => el.selectColumn !== e.target.id);
     setSelectedFilters(newArr);
+    console.log(newArr, 'newArr');
     const arrSelect = item.selectColumn;
     setArrayOfOptions([...arrayOfOptions, arrSelect]);
     if (newArr.length === 0) {
